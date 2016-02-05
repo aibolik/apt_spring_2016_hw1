@@ -11,21 +11,30 @@ def index():
 
 	resp = requests.get(URL)
 	bs4 = BeautifulSoup(resp.content, "html.parser")
-	rub = None
-	usd = None
-	eur = None
-	for tag in bs4.find_all('h4'):
-		if tag.string == 'usd':
-			p = tag.parent.p.string
-			usd = p.split(' ')[0]
-		if tag.string == 'rub':
-			p = tag.parent.p.string
-			rub = p.split(' ')[0]
-		if tag.string == 'eur':
-			p = tag.parent.p.string
-			eur = p.split(' ')[0]
+	rubBuy = None
+	rubSell = None
+	usdBuy = None
+	usdSell = None
+	eurBuy = None
+	eurSell = None
+	for tag in bs4.find_all('td', class_ = 'currency'):
+		if tag.string == 'USD':
+			buy = tag.parent.find_all('td', class_ = 'buy')
+			sell = tag.parent.find_all('td', class_ = 'sell')
+			usdBuy = buy[0].string
+			usdSell = sell[0].string
+		if tag.string == 'RUB':
+			buy = tag.parent.find_all('td', class_ = 'buy')
+			sell = tag.parent.find_all('td', class_ = 'sell')
+			rubBuy = buy[0].string
+			rubSell = sell[0].string
+		if tag.string == 'EUR':
+			buy = tag.parent.find_all('td', class_ = 'buy')
+			sell = tag.parent.find_all('td', class_ = 'sell')
+			eurBuy = buy[0].string
+			eurSell = sell[0].string
 
-	return {"usd": usd, "eur": eur, "rub": rub}
+	return {"usd": usdSell, "eur": eurSell, "rub": rubSell}
 
 
 URL = "https://github.com/giAtSDU/apt_spring_2016_hw1"
